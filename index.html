@@ -1,0 +1,1790 @@
+<!doctype html>
+<html lang="en">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fan Intimacy Project</title>
+  <script src="/_sdk/element_sdk.js"></script>
+  <style>
+    :root {
+      --sky-blue: #5B9BD5;
+      --soft-pink: #E6A8D7;
+      --warm-yellow: #F4D35E;
+      --lavender: #B4A7D6;
+      --coral: #F2836B;
+      --mint: #7BC4A3;
+      --deep-purple: #8B6CA8;
+    }
+
+    body {
+      box-sizing: border-box;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      height: 100%;
+      width: 100%;
+    }
+
+    body {
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+      overflow-x: hidden;
+    }
+
+    .app-wrapper {
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+    }
+
+    /* Navigation */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      padding: 2rem 3rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 100;
+      background-color: rgba(255, 255, 255, 0.98);
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      transition: background-color 0.3s ease;
+    }
+
+    nav.scrolled {
+      background-color: rgba(255, 255, 255, 1);
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+    }
+
+    .nav-title {
+      font-size: 1.2rem;
+      font-weight: 300;
+      letter-spacing: 0.05em;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2.5rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      font-size: 0.95rem;
+      font-weight: 400;
+      letter-spacing: 0.03em;
+      transition: opacity 0.3s ease;
+      cursor: pointer;
+    }
+
+    .nav-links a:hover {
+      opacity: 0.6;
+    }
+
+    .nav-links a.active {
+      font-weight: 600;
+    }
+
+    /* Page Container */
+    .page-container {
+      min-height: 100%;
+      padding-top: 8rem;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+
+    .page-container.active {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .page-container.hidden {
+      display: none;
+    }
+
+    /* Introduction Page */
+    .intro-page {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 4rem 3rem;
+    }
+
+    .intro-hero {
+      margin-bottom: 5rem;
+    }
+
+    .intro-hero h1 {
+      font-size: 3.5rem;
+      font-weight: 300;
+      line-height: 1.2;
+      margin-bottom: 1.5rem;
+      letter-spacing: -0.02em;
+    }
+
+    .intro-hero .subtitle {
+      font-size: 1.3rem;
+      font-weight: 300;
+      line-height: 1.6;
+      opacity: 0.8;
+    }
+
+    .intro-section {
+      margin-bottom: 4rem;
+    }
+
+    .intro-section h2 {
+      font-size: 1.8rem;
+      font-weight: 400;
+      margin-bottom: 1.5rem;
+      letter-spacing: 0.01em;
+    }
+
+    .intro-section p {
+      font-size: 1.1rem;
+      line-height: 1.8;
+      margin-bottom: 1.2rem;
+      font-weight: 300;
+    }
+
+    .artist-comparison {
+      display: flex;
+      justify-content: center;
+      gap: 3rem;
+      margin: 3rem 0;
+      flex-wrap: wrap;
+    }
+
+    .artist-option {
+      text-align: center;
+      transition: transform 0.3s ease;
+    }
+
+    .artist-option:hover {
+      transform: translateY(-5px);
+    }
+
+    .artist-photo {
+      width: 180px;
+      height: 180px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-bottom: 1rem;
+      border: 3px solid rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+    }
+
+    .artist-option.selected .artist-photo {
+      border-color: var(--lavender);
+      box-shadow: 0 8px 20px rgba(180, 167, 214, 0.3);
+    }
+
+    .artist-name {
+      font-size: 1rem;
+      font-weight: 500;
+      color: var(--charcoal);
+    }
+
+    .artist-option.selected .artist-name {
+      color: var(--lavender);
+      font-weight: 600;
+    }
+
+    /* Voice of the Artist Page */
+    .artist-page {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 3rem;
+    }
+
+    .artist-intro {
+      max-width: 900px;
+      margin: 0 auto 5rem;
+      text-align: center;
+    }
+
+    .artist-intro h1 {
+      font-size: 3rem;
+      font-weight: 300;
+      margin-bottom: 1.5rem;
+      letter-spacing: -0.01em;
+    }
+
+    .artist-intro p {
+      font-size: 1.15rem;
+      line-height: 1.8;
+      font-weight: 300;
+      opacity: 0.85;
+    }
+
+    .albums-section {
+      margin-bottom: 5rem;
+    }
+
+    .section-title {
+      font-size: 2rem;
+      font-weight: 400;
+      margin-bottom: 0.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    }
+
+    .section-sublabel {
+      font-size: 0.95rem;
+      opacity: 0.7;
+      font-style: italic;
+      margin-bottom: 2rem;
+      margin-top: -0.5rem;
+    }
+
+    .album-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 3rem;
+    }
+
+    .album-card {
+      border-radius: 12px;
+      padding: 2rem;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .album-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12);
+    }
+
+    .album-cover {
+      width: 100%;
+      border-radius: 8px;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .album-card h3 {
+      font-size: 1.6rem;
+      font-weight: 500;
+      margin-bottom: 0.5rem;
+    }
+
+    .album-card .year {
+      font-size: 0.9rem;
+      opacity: 0.6;
+      margin-bottom: 1.5rem;
+    }
+
+    .tracklist {
+      list-style: none;
+    }
+
+    .tracklist li {
+      padding: 0.8rem 0;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+      font-size: 0.95rem;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .tracklist li:hover {
+      padding-left: 1rem;
+    }
+
+    .track-name {
+      display: block;
+      font-weight: 400;
+    }
+
+    .track-thought {
+      margin-top: 0.8rem;
+      padding: 1rem;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      line-height: 1.6;
+      font-style: italic;
+      display: none;
+      border-left: 3px solid var(--sky-blue);
+    }
+
+    .tracklist li.active .track-thought {
+      display: block;
+    }
+
+    .album-reflection {
+      margin-top: 2rem;
+      padding: 1.5rem;
+      border-radius: 8px;
+      border-left: 3px solid var(--lavender);
+      max-height: 0;
+      overflow: hidden;
+      opacity: 0;
+      transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .album-reflection.show {
+      max-height: 500px;
+      opacity: 1;
+      margin-top: 1.5rem;
+    }
+
+    .final-thoughts-btn {
+      width: 100%;
+      margin-top: 1.5rem;
+      padding: 12px 24px;
+      background: transparent;
+      border: 1px solid rgba(0, 0, 0, 0.2);
+      border-radius: 6px;
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+      font-size: 0.9rem;
+      font-weight: 400;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .final-thoughts-btn:hover {
+      background: rgba(180, 167, 214, 0.1);
+      border-color: var(--lavender);
+      color: var(--lavender);
+    }
+
+    .final-thoughts-btn.active {
+      background: var(--lavender);
+      border-color: var(--lavender);
+      color: white;
+    }
+
+    .album-reflection h4 {
+      font-size: 1rem;
+      font-weight: 500;
+      margin-bottom: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-size: 0.9rem;
+      color: var(--lavender);
+    }
+
+    .album-reflection p {
+      font-size: 1rem;
+      line-height: 1.7;
+      font-weight: 300;
+    }
+
+    .media-section {
+      margin-bottom: 5rem;
+    }
+
+    .media-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2rem;
+    }
+
+    @media (max-width: 1024px) {
+      .media-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .media-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .media-card {
+      border-radius: 12px;
+      overflow: hidden;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .media-card:hover {
+      transform: scale(1.02);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    }
+
+    .media-link {
+      display: block;
+      text-decoration: none;
+    }
+
+    .media-thumbnail {
+      width: 100%;
+      aspect-ratio: 16/9;
+      overflow: hidden;
+      background: #f0f0f0;
+      position: relative;
+    }
+
+    .media-thumbnail img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.3s ease;
+    }
+
+    .media-card:hover .media-thumbnail img {
+      transform: scale(1.05);
+    }
+
+    .media-info {
+      padding: 1.5rem;
+    }
+
+    .media-info h4 {
+      font-size: 1.1rem;
+      font-weight: 500;
+      margin-bottom: 0.5rem;
+    }
+
+    .media-info .type {
+      font-size: 0.85rem;
+      opacity: 0.6;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.8rem;
+    }
+
+    .media-thought {
+      font-size: 0.95rem;
+      line-height: 1.6;
+      font-style: italic;
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid rgba(0, 0, 0, 0.1);
+      display: none;
+    }
+
+    .media-card.expanded .media-thought {
+      display: block;
+    }
+
+    .artist-conclusion {
+      max-width: 900px;
+      margin: 4rem auto 0;
+      padding: 3rem;
+      border-radius: 12px;
+    }
+
+    .artist-conclusion h3 {
+      font-size: 1.8rem;
+      font-weight: 400;
+      margin-bottom: 1.5rem;
+    }
+
+    .artist-conclusion p {
+      font-size: 1.05rem;
+      line-height: 1.8;
+      font-weight: 300;
+    }
+
+    /* Voice of the Fans Page - REDESIGNED */
+    .fans-page {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 3rem;
+    }
+
+    .fans-intro {
+      max-width: 900px;
+      margin: 0 auto 4rem;
+      text-align: center;
+    }
+
+    .fans-intro h1 {
+      font-size: 3rem;
+      font-weight: 300;
+      margin-bottom: 1.5rem;
+      letter-spacing: -0.01em;
+    }
+
+    .intro-expandable {
+      margin-top: 2rem;
+    }
+
+    .intro-full {
+      max-height: 0;
+      overflow: hidden;
+      opacity: 0;
+      transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+      text-align: left;
+      margin: 2rem auto 0;
+      max-width: 800px;
+    }
+
+    .intro-full.expanded {
+      max-height: 1000px;
+      opacity: 1;
+    }
+
+    .intro-full p {
+      font-size: 1.05rem;
+      line-height: 1.9;
+      font-weight: 300;
+      margin-bottom: 1.5rem;
+    }
+
+    .read-more-btn {
+      background: transparent;
+      border: 1px solid rgba(0, 0, 0, 0.2);
+      padding: 10px 28px;
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+      font-size: 0.85rem;
+      font-weight: 400;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      margin-top: 1.5rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .read-more-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 0;
+      height: 100%;
+      background: linear-gradient(90deg, var(--sky-blue), var(--soft-pink), var(--lavender));
+      transition: width 0.4s ease;
+      z-index: -1;
+    }
+
+    .read-more-btn:hover::before {
+      width: 100%;
+    }
+
+    .read-more-btn:hover {
+      color: white;
+      border-color: var(--lavender);
+    }
+
+    .read-more-btn.expanded {
+      background: rgba(0, 0, 0, 0.03);
+      border-color: var(--lavender);
+    }
+
+    .themes-section {
+      margin-bottom: 4rem;
+    }
+
+    .theme-card {
+      margin-bottom: 3rem;
+      border-radius: 12px;
+      padding: 2.5rem;
+      transition: box-shadow 0.3s ease;
+      cursor: pointer;
+      border-left: 4px solid;
+      position: relative;
+    }
+
+    /* First 3 cards in a row of 3 */
+    .themes-section {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2rem;
+      grid-auto-rows: auto;
+    }
+
+    /* Cards 4-7 take up 2 columns each (2 per row) */
+    .theme-card:nth-child(4),
+    .theme-card:nth-child(5),
+    .theme-card:nth-child(6),
+    .theme-card:nth-child(7) {
+      grid-column: span 1.5;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 1024px) {
+      .themes-section {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      
+      .theme-card:nth-child(4),
+      .theme-card:nth-child(5),
+      .theme-card:nth-child(6),
+      .theme-card:nth-child(7) {
+        grid-column: span 1;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .themes-section {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .theme-card:nth-child(1) { border-left-color: var(--sky-blue); }
+    .theme-card:nth-child(2) { border-left-color: var(--soft-pink); }
+    .theme-card:nth-child(3) { border-left-color: var(--warm-yellow); }
+    .theme-card:nth-child(4) { border-left-color: var(--lavender); }
+    .theme-card:nth-child(5) { border-left-color: var(--coral); }
+    .theme-card:nth-child(6) { border-left-color: var(--mint); }
+    .theme-card:nth-child(7) { border-left-color: var(--deep-purple); }
+
+    .theme-card:hover {
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+    }
+
+    .theme-card:nth-child(1):hover { box-shadow: 0 10px 40px rgba(91, 155, 213, 0.2); }
+    .theme-card:nth-child(2):hover { box-shadow: 0 10px 40px rgba(230, 168, 215, 0.2); }
+    .theme-card:nth-child(3):hover { box-shadow: 0 10px 40px rgba(244, 211, 94, 0.2); }
+    .theme-card:nth-child(4):hover { box-shadow: 0 10px 40px rgba(180, 167, 214, 0.2); }
+    .theme-card:nth-child(5):hover { box-shadow: 0 10px 40px rgba(242, 131, 107, 0.2); }
+    .theme-card:nth-child(6):hover { box-shadow: 0 10px 40px rgba(123, 196, 163, 0.2); }
+    .theme-card:nth-child(7):hover { box-shadow: 0 10px 40px rgba(139, 108, 168, 0.2); }
+
+    .theme-header {
+      margin-bottom: 2rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    }
+
+    .theme-image {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+      object-position: center;
+      border-radius: 8px;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s ease;
+    }
+
+    .theme-card:hover .theme-image {
+      transform: scale(1.02);
+    }
+
+    .theme-card h3 {
+      font-size: 1.8rem;
+      font-weight: 500;
+      margin-bottom: 0.8rem;
+    }
+
+    .theme-subheading {
+      font-size: 1rem;
+      line-height: 1.6;
+      opacity: 0.75;
+      font-weight: 400;
+      margin-bottom: 0.8rem;
+      font-style: italic;
+    }
+
+    .voice-count {
+      font-size: 0.9rem;
+      opacity: 0.6;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .theme-content {
+      max-height: 0;
+      overflow: hidden;
+      opacity: 0;
+      transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .theme-card.expanded .theme-content {
+      max-height: 5000px;
+      opacity: 1;
+      margin-top: 2rem;
+    }
+
+    .audio-clips-grid {
+      display: grid;
+      gap: 1.5rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .audio-clip-item {
+      padding: 1.5rem;
+      border-radius: 8px;
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      transition: all 0.3s ease;
+      border-left: 3px solid;
+    }
+
+    .theme-card:nth-child(1) .audio-clip-item { border-left-color: var(--sky-blue); }
+    .theme-card:nth-child(2) .audio-clip-item { border-left-color: var(--soft-pink); }
+    .theme-card:nth-child(3) .audio-clip-item { border-left-color: var(--warm-yellow); }
+    .theme-card:nth-child(4) .audio-clip-item { border-left-color: var(--lavender); }
+    .theme-card:nth-child(5) .audio-clip-item { border-left-color: var(--coral); }
+    .theme-card:nth-child(6) .audio-clip-item { border-left-color: var(--mint); }
+    .theme-card:nth-child(7) .audio-clip-item { border-left-color: var(--deep-purple); }
+
+    .audio-clip-item:hover {
+      border-color: rgba(0, 0, 0, 0.15);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+      border-left-width: 3px;
+    }
+
+    .audio-label {
+      font-size: 0.9rem;
+      opacity: 0.7;
+      margin-bottom: 1rem;
+      font-style: italic;
+    }
+
+    audio {
+      width: 100%;
+      height: 36px;
+      outline: none;
+    }
+
+    .curator-notes {
+      padding: 2rem;
+      border-radius: 8px;
+      margin-top: 2rem;
+      border-left: 3px solid rgba(0, 0, 0, 0.1);
+    }
+
+    .theme-card:nth-child(1) .curator-notes { border-left-color: var(--sky-blue); }
+    .theme-card:nth-child(2) .curator-notes { border-left-color: var(--soft-pink); }
+    .theme-card:nth-child(3) .curator-notes { border-left-color: var(--warm-yellow); }
+    .theme-card:nth-child(4) .curator-notes { border-left-color: var(--lavender); }
+    .theme-card:nth-child(5) .curator-notes { border-left-color: var(--coral); }
+    .theme-card:nth-child(6) .curator-notes { border-left-color: var(--mint); }
+    .theme-card:nth-child(7) .curator-notes { border-left-color: var(--deep-purple); }
+
+    .curator-notes h4 {
+      font-size: 1.1rem;
+      font-weight: 500;
+      margin-bottom: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-size: 0.95rem;
+    }
+
+    .theme-card:nth-child(1) .curator-notes h4 { color: var(--sky-blue); }
+    .theme-card:nth-child(2) .curator-notes h4 { color: var(--soft-pink); }
+    .theme-card:nth-child(3) .curator-notes h4 { color: var(--warm-yellow); }
+    .theme-card:nth-child(4) .curator-notes h4 { color: var(--lavender); }
+    .theme-card:nth-child(5) .curator-notes h4 { color: var(--coral); }
+    .theme-card:nth-child(6) .curator-notes h4 { color: var(--mint); }
+    .theme-card:nth-child(7) .curator-notes h4 { color: var(--deep-purple); }
+
+    .curator-notes p {
+      font-size: 1.05rem;
+      line-height: 1.8;
+      font-weight: 300;
+    }
+
+    .fans-conclusion {
+      max-width: 900px;
+      margin: 5rem auto 0;
+      padding: 3rem;
+      border-radius: 12px;
+    }
+
+    .fans-conclusion h3 {
+      font-size: 1.8rem;
+      font-weight: 400;
+      margin-bottom: 1.5rem;
+    }
+
+    .fans-conclusion p {
+      font-size: 1.05rem;
+      line-height: 1.8;
+      font-weight: 300;
+    }
+
+    /* Conclusion Page */
+    .conclusion-page {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 4rem 3rem;
+    }
+
+    .conclusion-hero {
+      margin-bottom: 4rem;
+    }
+
+    .conclusion-hero h1 {
+      font-size: 3.5rem;
+      font-weight: 300;
+      line-height: 1.2;
+      margin-bottom: 2rem;
+      letter-spacing: -0.02em;
+    }
+
+    .conclusion-image-wrapper {
+      max-width: 600px;
+      margin: 3rem auto;
+      text-align: center;
+    }
+
+    .conclusion-image {
+      width: 100%;
+      border-radius: 12px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    }
+
+    .reflection-section {
+      margin-bottom: 3rem;
+    }
+
+    .reflection-section h2 {
+      font-size: 1.8rem;
+      font-weight: 400;
+      margin-bottom: 1.5rem;
+      letter-spacing: 0.01em;
+    }
+
+    .reflection-section p {
+      font-size: 1.1rem;
+      line-height: 1.8;
+      margin-bottom: 1.2rem;
+      font-weight: 300;
+    }
+
+    .final-thought {
+      margin-top: 5rem;
+      padding: 3rem;
+      border-radius: 12px;
+      text-align: center;
+    }
+
+    .final-thought p {
+      font-size: 1.3rem;
+      line-height: 1.8;
+      font-weight: 300;
+      font-style: italic;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      nav {
+        padding: 1.5rem;
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .nav-links {
+        gap: 1.5rem;
+      }
+
+      .page-container {
+        padding-top: 10rem;
+      }
+
+      .intro-hero h1,
+      .fans-intro h1,
+      .conclusion-hero h1 {
+        font-size: 2.5rem;
+      }
+
+      .theme-card {
+        padding: 2rem 1.5rem;
+      }
+    }
+  </style>
+ </head>
+ <body>
+  <div class="app-wrapper">
+   <nav id="nav">
+    <div class="nav-title" id="navTitle">
+     Birth of a Fan
+    </div>
+    <ul class="nav-links">
+     <li><a class="nav-link active" data-page="intro" id="navIntro">Introduction</a></li>
+     <li><a class="nav-link" data-page="artist" id="navArtist">Voice of the Artist</a></li>
+     <li><a class="nav-link" data-page="fans" id="navFans">Voice of the Fans</a></li>
+     <li><a class="nav-link" data-page="conclusion" id="navConclusion">Conclusion</a></li>
+    </ul>
+   </nav>
+
+   <!-- Introduction Page -->
+   <div class="page-container active" id="introPage">
+    <div class="intro-page">
+     <div class="intro-hero">
+      <h1 id="introHeading">Birth of a Fan</h1>
+      <p class="subtitle">Exploring parasocial attachment through music, listening, and emotional intimacy</p>
+     </div>
+     
+     <div class="intro-section">
+      <h2>Research Question</h2>
+      <p>This project explores how fandom forms through listening. Specifically, I am interested in parasocial attachment—the process by which emotional intimacy develops between a listener and a singer-songwriter through repeated engagement with music, media, and interpretation. Rather than treating fandom as instant devotion or obsession, I ask a quieter question: how does someone move from first encountering an artist's work to feeling a sense of familiarity, recognition, and connection that begins to resemble a relationship? In other words, how is a fan born?</p>
+     </div>
+
+     <div class="intro-section">
+      <h2>Theoretical Framework</h2>
+      <p>My thinking is grounded in Donald Horton and R. Richard Wohl's concept of parasocial interaction, which they describe as the "illusion of face-to-face relationship with the performer." These relationships are inherently one-sided, yet they feel meaningful because performers present consistent personas that listeners come to know over time. What interested me most was not whether this intimacy is "real" or "illusory," but how it is lived: how familiarity accumulates, how emotion attaches, and how listeners come to feel that an artist understands them—or helps them understand themselves.</p>
+     </div>
+
+     <div class="intro-section">
+      <h2>Methodology</h2>
+      <p>To explore this, I designed the project in two parts. In <strong>Voice of the Artist</strong>, I document my own journey into Olivia Dean's music through close listening, watching performances, and engaging with interviews and visuals. I tracked not just what I consumed, but how my feelings shifted as familiarity grew. In <strong>Voice of the Fans</strong>, I widen the frame, collecting audio fragments from interviews with fans to hear how others describe their own paths into connection, intimacy, and belonging. Together, these sections form a small archive of how parasocial attachment is experienced both privately and collectively.</p>
+     </div>
+
+     <div class="intro-section">
+      <h2>Choosing the Artist</h2>
+      
+      <div class="artist-comparison">
+        <div class="artist-option">
+          <img src="data/stevie.jpg" alt="Stevie Nicks" class="artist-photo">
+          <p class="artist-name">Stevie Nicks</p>
+        </div>
+        <div class="artist-option">
+          <img src="data/john.png" alt="John Mayer" class="artist-photo">
+          <p class="artist-name">John Mayer</p>
+        </div>
+        <div class="artist-option selected">
+          <img src="data/olivia.png" alt="Olivia Dean" class="artist-photo">
+          <p class="artist-name">Olivia Dean</p>
+        </div>
+      </div>
+
+      <p>Choosing an artist for this project made one thing immediately clear: fandom is not only about music, but about identity. I began with three options: Stevie Nicks, John Mayer, and Olivia Dean. Nicks was a rock legend I had always wanted to get into, I remembered liking an album from Mayer in high school, and a friend had informed me that Dean was up and coming. I listened to two albums from each and although I really wanted to like Nicks more than I did, I just wasn't feeling it. Mayer's two albums were great, but I was feeling mild hesitance as I considered some of his public exploits I had disliked in the past.</p>
+      
+      <p>As I reasoned over these artists, I came to my first conclusion: Fandom isn't purely about the music. It's also about the singer-songwriter as a person because who you are friends with (or at least "feel" like you are friends with) says something about you, your interests, and your values. Horton and Wohl note that fans often feel that association with a performer transfers some of that persona's meaning onto themselves. I wanted to love Stevie Nicks because liking her would make me feel cool by association; I would borrow some of her rock-and-roll street cred to legitimate my own coolness. Similarly with Mayer, in becoming a fan and thereby associating with him, I felt like some of his poor reputation with Taylor Swift and her fans would rub off on me.</p>
+      
+      <p>Olivia Dean ultimately felt different. As a young Black singer-songwriter close to my own age, she offered the possibility of discovering an artist in real time, without preconceived narratives or inherited fandom. Her music's openness, emotional honesty, and attention to many forms of love created space for connection to develop gradually. This project traces that development: how listening becomes attachment, how intimacy is felt through sound and voice, and how fandom emerges not all at once, but through attention, repetition, and care.</p>
+     </div>
+    </div>
+   </div>
+
+   <!-- Voice of the Artist Page -->
+   <div class="page-container hidden" id="artistPage">
+    <div class="artist-page">
+     <div class="artist-intro">
+      <h1 id="artistHeading">Voice of the Artist</h1>
+      <p>This project begins with my own listening. Before turning outward to other fans, I wanted to understand what it feels like to move from casual exposure to deeper attachment: to sit with Olivia Dean's music, watch her performances, and gradually come to know her as an artist. In this phase, I listened closely to songs on repeat, to lyrics that followed me throughout the day, and to interviews and visuals that shaped how I understood who she is.</p>
+     </div>
+
+     <div class="albums-section">
+      <h2 class="section-title">Albums</h2>
+      <p class="section-sublabel">Click to explore my thoughts</p>
+      <div class="album-grid">
+       
+       <!-- The Art of Loving Album -->
+       <div class="album-card">
+        <img src="data/art of loving.jpg" alt="The Art of Loving album cover" class="album-cover">
+        <h3>The Art of Loving</h3>
+        <p class="year">2025</p>
+        <ul class="tracklist">
+         <li onclick="toggleTrack(this)">
+          <span class="track-name">The Art of Loving</span>
+          <div class="track-thought">Feels soft and delicate, the way love itself does when it's new or imagined. Makes me wistful, like I'm stepping into a perfect cinematic moment, my own quiet Disney princess scene. Sets the emotional tone for the album: romantic, hopeful, and almost unreal.</div>
+         </li>
+         <li onclick="toggleTrack(this)">
+          <span class="track-name">Nice to Each Other</span>
+          <div class="track-thought">Captures the awkward, tender back-and-forth of falling in love before anyone wants to name it. I love the way the energy picks up midway, mirroring the excitement and hesitation of being on the edge of something. What if instead of defining things, we just try being nice to each other?</div>
+         </li>
+         <li onclick="toggleTrack(this)">
+          <span class="track-name">Lady Lady</span>
+          <div class="track-thought">Makes me cry. It feels like a reflection on growing up and slowly coming to know myself, especially as I stand on the edge of graduation. It makes me excited for who I'm becoming, and I like to think my younger self would be excited too.</div>
+         </li>
+         <li onclick="toggleTrack(this)">
+          <span class="track-name">Close Up</span>
+          <div class="track-thought">Taps into my fear of being truly seen. What if you when you get to know me you don't like me anymore? Strong feelings of putting myself out there and wondering if it was a mistake, definitely hits deeply.</div>
+         </li>
+         <li onclick="toggleTrack(this)">
+          <span class="track-name">So Easy to Fall in Love</span>
+          <div class="track-thought">This is what a love story in Paris sounds like. Light, breezy, sweet, and romantic, and it captures how I want to be seen by someone else. It makes falling in love feel effortless and beautiful, I'm a Disney princess again for the length of the song.</div>
+         </li>
+         <li onclick="toggleTrack(this)">
+          <span class="track-name">Let Alone the One You Love</span>
+          <div class="track-thought">Good for crying. Really sits with the pain of betrayal and heartbreak, especially when it comes from someone who should have cared most. Who would do that to a friend, let alone the one you love?</div>
+         </li>
+         <li onclick="toggleTrack(this)">
+          <span class="track-name">Man I Need</span>
+          <div class="track-thought">My very first Olivia Dean song! She is speaking directly to my heart: wanting love, but also wanting someone to step up and meet you where you are. Upbeat and fun, but also grown, vulnerable, and honest.</div>
+         </li>
+         <li onclick="toggleTrack(this)">
+          <span class="track-name">Something in Between</span>
+          <div class="track-thought">Didn't stand out to me emotionally in the same way as others.</div>
+         </li>
+         <li onclick="toggleTrack(this)">
+          <span class="track-name">Loud</span>
+          <div class="track-thought">Simple but powerful guitar and melody. Controlled drama and restrained anguish that really draws me in. Her style here is emotional and expressive, reminds me a lot of RAYE.</div>
+         </li>
+         <li onclick="toggleTrack(this)">
+          <span class="track-name">Baby Steps</span>
+          <div class="track-thought">Hopeful and grounding. It reminds me that it's okay to pick yourself up slowly and keep going. Strength and softness can coexist, growth doesn't have to be rushed.</div>
+         </li>
+         <li onclick="toggleTrack(this)">
+          <span class="track-name">A Couple Minutes</span>
+          <div class="track-thought">Everything I love: slow, sweet, soft, a little sexy, a little sad. Feels deeply personal and intimate. Love's never wasted when it's shared.</div>
+         </li>
+         <li onclick="toggleTrack(this)">
+          <span class="track-name">I've Seen It</span>
+          <div class="track-thought">Didn't leave a strong impression on me emotionally.</div>
+         </li>
+        </ul>
+        <button class="final-thoughts-btn" onclick="toggleReflection(this)">Final Thoughts</button>
+        <div class="album-reflection">
+         <h4>Album Reflection</h4>
+         <p>Overall, this album feels like a portrait of being in your twenties: messy, hopeful, tender, and uncertain. It captures the simultaneous excitement of becoming someone new and the sadness of leaving parts of yourself behind. Listening to it, I feel seen in my desire to grow, to love deeply, and to be loved in return.</p>
+        </div>
+       </div>
+
+       <!-- Messy Album -->
+       <div class="album-card">
+        <img src="data/messy cover.jpeg" alt="Messy album cover" class="album-cover">
+        <h3>Messy</h3>
+        <p class="year">2023</p>
+        <ul class="tracklist">
+         <li onclick="toggleTrack(this)">
+          <span class="track-name">UFO</span>
+          <div class="track-thought">Feels like drifting until someone gently pulls you back to Earth. There's a quiet comfort in the idea of being anchored by another person when you feel unmoored.</div>
+         </li>
+         <li onclick="toggleTrack(this)">
+          <span class="track-name">Dive</span>
+          <div class="track-thought">So bright, upbeat, and playful; it makes falling in love feel fun and impulsive like choosing to dive in without overthinking it. Reminds me of early 2010s romcoms where everything feels possible and a little reckless.</div>
+         </li>
+         <li onclick="toggleTrack(this)">
+          <span class="track-name">Ladies Room</span>
+          <div class="track-thought">Groovy and confident, perfectly matching the song's self-love energy. I love the title too, it feels like a subtle nod to A Room of One's Own, a private space for women to claim themselves. Unapologetic, grounded, and a little Michael Jackson-coded at the end.</div>
+         </li>
+         <li onclick="toggleTrack(this)">
+          <span class="track-name">No Man</span>
+          <div class="track-thought">Powerful and dangerous, like something a siren might sing. There's a scorned, femme fatale energy and it has almost operatic intensity even though she's lamenting.</div>
+         </li>
+         <li onclick="toggleTrack(this)">
+          <span class="track-name">Dangerously Easy</span>
+          <div class="track-thought">Bittersweet in a way that hurts. Captures the feeling of watching someone move on effortlessly while you're still stuck in the mess of it all. What have I got to do to make it look easy, dangerously easy, like you?</div>
+         </li>
+         <li onclick="toggleTrack(this)">
+          <span class="track-name">Getting There – Interlude</span>
+          <div class="track-thought">Beautiful, rich transition music.</div>
+         </li>
+         <li onclick="toggleTrack(this)">
+          <span class="track-name">Danger</span>
+          <div class="track-thought">Catchy and addictive sound that won't leave my head, mirroring the awareness of danger, but also inability to resist loving someone anyway. Perfectly captures the feeling of being scared and pulled forward at the same time.</div>
+         </li>
+         <li onclick="toggleTrack(this)">
+          <span class="track-name">The Hardest Part</span>
+          <div class="track-thought">Feels like the moment after the third-act breakup in a romcom, when the main character finally chooses herself. Realizing you've grown and changed, even if someone else wants you to stay the same.</div>
+         </li>
+         <li onclick="toggleTrack(this)">
+          <span class="track-name">I Could Be a Florist</span>
+          <div class="track-thought">Heartbreakingly soft and vulnerable. It's hopeful and melancholic and longing. There's something so deeply tender about daydreams, they feel so human and fragile. Lingered in my heart.</div>
+         </li>
+         <li onclick="toggleTrack(this)">
+          <span class="track-name">Messy</span>
+          <div class="track-thought">Feels like reassurance. You don't need to be perfect or prepared. It's okay to be messy, someone will still stand beside you. Steady, comforting, powerful.</div>
+         </li>
+         <li onclick="toggleTrack(this)">
+          <span class="track-name">Everybody's Crazy</span>
+          <div class="track-thought">Caught me off guard. It's raw and exposed and the line about squeezing someone's hand under the table made me cry unexpectedly; it's such a small, sad image, but it carries so much need. Reminded me of Joni Mitchell in its honesty and emotional clarity.</div>
+         </li>
+         <li onclick="toggleTrack(this)">
+          <span class="track-name">Carmen</span>
+          <div class="track-thought">Feels like a tribute and a thank-you. Honors her grandmother and the legacy she carries forward, and including her voice makes it even more intimate. Cue even more tears.</div>
+         </li>
+        </ul>
+        <button class="final-thoughts-btn" onclick="toggleReflection(this)">Final Thoughts</button>
+        <div class="album-reflection">
+         <h4>Album Reflection</h4>
+         <p>Messy unfolded slowly for me, but once it did, it hit deeply. The vulnerability in the lyrics—naming anxieties, fears, hopes, and desires I recognize in myself—touched something I wasn't expecting. I found myself crying without fully understanding why, the same way I did the first time I listened to Billie Eilish and experienced the shock of hearing someone mirror your inner world so clearly. This album made me feel less alone in wanting, fearing, and dreaming the way I do.</p>
+        </div>
+       </div>
+
+      </div>
+     </div>
+
+     <!-- Media section -->
+     <div class="media-section">
+      <h2 class="section-title">Media & Interviews</h2>
+      <p class="section-sublabel">Click to explore my thoughts</p>
+      <!-- Note: Video thumbnails are loaded from YouTube. If they don't appear, check your internet connection 
+           or try opening the HTML file in a browser with internet access. The images use YouTube's thumbnail API 
+           which requires an active internet connection to load. -->
+      <div class="media-grid">
+       
+       <!-- So Easy Music Video -->
+       <div class="media-card" onclick="toggleMedia(this)">
+        <a href="https://www.youtube.com/watch?v=3sur4BmjQt8" target="_blank" class="media-link">
+         <div class="media-thumbnail">
+          <img src="https://img.youtube.com/vi/3sur4BmjQt8/maxresdefault.jpg" alt="So Easy (To Fall in Love) Music Video">
+         </div>
+        </a>
+        <div class="media-info">
+         <h4>So Easy (To Fall in Love)</h4>
+         <p class="type">Music Video</p>
+         <div class="media-thought">
+          This video feels like the visual version of a daydream. Olivia Dean floats through the city in a perfect dress, flirty and hopeful, as if she's quietly wishing love into existence. Other couples fall in love around her and it makes the world feel alive and romantic, like love is always happening just out of frame. Watching it feels exactly like what I imagined when I first heard the song: a woman going about her day, open to the possibility that something beautiful might find her.
+         </div>
+        </div>
+       </div>
+
+       <!-- Man I Need Live Performance -->
+       <div class="media-card" onclick="toggleMedia(this)">
+        <a href="https://www.youtube.com/watch?v=qoDto7Xf9Lc" target="_blank" class="media-link">
+         <div class="media-thumbnail">
+          <img src="https://img.youtube.com/vi/qoDto7Xf9Lc/maxresdefault.jpg" alt="Man I Need Live Performance">
+         </div>
+        </a>
+        <div class="media-info">
+         <h4>Man I Need</h4>
+         <p class="type">Live Performance</p>
+         <div class="media-thought">
+          Seeing this song performed live changes it completely. Her facial expressions, dancing, and huge smile give the lyrics a cheeky playfulness and confidence that you don't experience as fully when just listening. Watching how she gets lost in the performance reminds me of singing alone in my room. Her energy is infectious, and it makes the desire in the song feel not just hopeful, but genuine.
+         </div>
+        </div>
+       </div>
+
+       <!-- Messy Live Film -->
+       <div class="media-card" onclick="toggleMedia(this)">
+        <a href="https://www.youtube.com/watch?v=zg4a54rzIvA" target="_blank" class="media-link">
+         <div class="media-thumbnail">
+          <img src="https://img.youtube.com/vi/zg4a54rzIvA/maxresdefault.jpg" alt="Messy Live Film">
+         </div>
+        </a>
+        <div class="media-info">
+         <h4>Messy</h4>
+         <p class="type">Live Film</p>
+         <div class="media-thought">
+          This film is deeply intimate in its simplicity. There's something powerful about hearing the most emotional songs on the album for me personally (Everybody's Crazy, Messy, Carmen) in this setting: outdoors, handheld camera, simple outfits, her voice asking to be understood while surrounded by open space. It makes her anxiety and vulnerability feel grounded and human. We're all just trying to figure ourselves out in a big, overwhelming world and watching her perform alongside her band in the field deepens that feeling of connection; the joy between the musicians feels genuine and present. Carmen was especially moving here. Singing about her grandmother's legacy while standing in nature makes the grief feel expansive rather than closed-off, like she want to share her memory with the whole world. As the film ends with her dancing into the darkness, backed by full, swelling sound, it feels like a quiet declaration of moving forward and carrying love, loss, and memory with her. Seeing these songs performed this way solidified what I already felt listening to the album: that the honesty of the music comes from humility. The simplicity of the setting lets the emotion lead, making the music feel lived-in rather than performed.
+         </div>
+        </div>
+       </div>
+
+       <!-- Album Interview -->
+       <div class="media-card" onclick="toggleMedia(this)">
+        <a href="https://www.youtube.com/watch?v=56t7AzBdDTg" target="_blank" class="media-link">
+         <div class="media-thumbnail">
+          <img src="https://img.youtube.com/vi/56t7AzBdDTg/maxresdefault.jpg" alt="Album Interview">
+         </div>
+        </a>
+        <div class="media-info">
+         <h4>Album Interview</h4>
+         <p class="type">Interview</p>
+         <div class="media-thought">
+          I love how comfortable and unguarded she comes across. Even small details like her wearing the tinted glasses so casually suggest genuine ease rather than performance. Her discussion about not "hearing herself" in her earlier music, and the need to retreat home to reconnect also deeply resonated; I know that feeling of needing quiet and solitude to find your own voice again, especially in today's digital age.
+          Learning that The Art of Loving was inspired by bell hooks made everything click. Her expansive view of love (romantic, platonic, self-directed) feels intentional, not accidental. When she described wanting the album to feel warm, like a heated blanket you can return to, I realized that perfectly matched my listening experience. She comes across as thoughtful, silly, and sincere—a great conversationalist who values honesty, growth, and care, both in her music and in love.
+         </div>
+        </div>
+       </div>
+
+       <!-- Vanity Fair Interview -->
+       <div class="media-card" onclick="toggleMedia(this)">
+        <a href="https://www.youtube.com/watch?v=BgOtlbwLoHg" target="_blank" class="media-link">
+         <div class="media-thumbnail">
+          <img src="https://img.youtube.com/vi/BgOtlbwLoHg/maxresdefault.jpg" alt="Vanity Fair Interview">
+         </div>
+        </a>
+        <div class="media-info">
+         <h4>Vanity Fair</h4>
+         <p class="type">Interview</p>
+         <div class="media-thought">
+          This interview made her feel strikingly human. I loved her moment of self-acceptance when she named what she likes about her appearance without hesitation. It felt like a quiet but powerful example of self-love. Hearing her inner dialogue out loud also reminded me of my own: the constant toggling between confidence and self-consciousness, wanting to be seen and wanting to disappear.
+          I also like how she talks about creativity as something playful rather than precious, emphasizing process over product, definitely a refreshing perspective. Her stories about family, music, independence, and wandering anonymously through the city made her feel deeply relatable, like someone in her twenties figuring things out in real time (just like me!). The final sculpture she created didn't look like her, but "sparked joy," and that captures her spirit perfectly.
+         </div>
+        </div>
+       </div>
+
+       <!-- Apple Music Interview -->
+       <div class="media-card" onclick="toggleMedia(this)">
+        <a href="https://www.youtube.com/watch?v=RkG5yd_vGbY" target="_blank" class="media-link">
+         <div class="media-thumbnail">
+          <img src="https://img.youtube.com/vi/RkG5yd_vGbY/maxresdefault.jpg" alt="Apple Music Interview">
+         </div>
+        </a>
+        <div class="media-info">
+         <h4>Apple Music</h4>
+         <p class="type">Interview</p>
+         <div class="media-thought">
+          My admiration for her only grew after this interview. She jokes that fear kept her from certain milestones, but her admission was incredibly honest. Fear doesn't vanish just because success arrives. I was also struck by her unwavering commitment to truth in her music: she won't write anything she hasn't lived, knowing she has to carry those songs for years.
+          Learning about her background (The BRIT School, her long-term band collaboration, starting by busking and playing tiny gigs) gives her success a real foundation but also explains her grounded demeanor and familiar sound (Raye, Adele, Winehouse, and many others whom I think she sounds like also attended The BRIT). When she explained that she avoids album features to hear and protect her own voice, I again felt deeply understood. She leaves me with the impression of someone proud, healed, grateful, and entirely herself: ambitious, playful, and fully present in the life she's created.
+         </div>
+        </div>
+       </div>
+
+      </div>
+     </div>
+
+     <!-- Reflections -->
+     <div class="artist-conclusion">
+      <h3>Reflections</h3>
+      <p>Reflecting on this process, I can see how my relationship with Olivia Dean's music has shifted. The songs function not as simple sounds, but as emotional reference points: tools for navigating my moods, relationships, and self. Through repeated listening, performances, and interviews, an image of Dean has began to form that familiar but not known, intimately felt but not personal. This section highlights the beginning of fandom through private, quiet acts of listening, an experience many share. Next, I shift focus to how others articulate this very same connection.</p>
+     </div>
+    </div>
+   </div>
+
+   <!-- Voice of the Fans Page -->
+   <div class="page-container hidden" id="fansPage">
+    <div class="fans-page">
+     <div class="fans-intro">
+      <h1 id="fansHeading">Voice of the Fans</h1>
+      
+      <div class="intro-expandable">
+        <div class="intro-full expanded" id="introFull">
+          <p>After tracing my own journey into Olivia Dean's music, I wanted to understand how fandom feels beyond myself. In this phase, I spoke with fans to understand how their relationships with her music began, deepened, and took shape over time. Rather than presenting full interviews, I've collected audio snippets of moments where fans describe recognition, aspiration, vulnerability, and belonging.</p>
+          
+          <p>Listening across these voices reveals that fandom does not follow a single path. Some fans relate to Olivia Dean as a future version of themselves; others experience her music as a guide that reshapes how they think and feel. Together, these clips form a small archive of how parasocial intimacy, authenticity, and connection are lived—not just by one listener, but across a community.</p>
+          
+          <p>You can listen to fragments of these conversations below.</p>
+        </div>
+      </div>
+     </div>
+
+     <div class="themes-section">
+      <!-- Theme 1 -->
+      <div class="theme-card" onclick="toggleTheme(this)">
+        <div class="theme-header">
+          <img src="data/olivia1.png" alt="Becoming a Fan" class="theme-image">
+          <h3>Becoming a Fan</h3>
+          <p class="theme-subheading">Tracing the shift from enjoying music to finding personal meaning in it</p>
+          <p class="voice-count">4 voices</p>
+        </div>
+        <div class="theme-content">
+          <div class="audio-clips-grid">
+            <div class="audio-clip-item">
+              <p class="audio-label">Realizing the album speaks about love beyond romance</p>
+              <audio controls>
+                <source src="audios/cam sec1 audio1.m4a" type="audio/mp4">
+                Your browser does not support the audio element.
+              </audio>
+            </div>
+            <div class="audio-clip-item">
+              <p class="audio-label">Hearing a song at the right moment</p>
+              <audio controls>
+                <source src="audios/cam sec1 audio2.m4a" type="audio/mp4">
+                Your browser does not support the audio element.
+              </audio>
+            </div>
+            <div class="audio-clip-item">
+              <p class="audio-label">When listening shifts from reflection to emotional support</p>
+              <audio controls>
+                <source src="audios/Gabby sec1 audio1.m4a" type="audio/mp4">
+                Your browser does not support the audio element.
+              </audio>
+            </div>
+            <div class="audio-clip-item">
+              <p class="audio-label">Recognizing different forms of love within the music</p>
+              <audio controls>
+                <source src="audios/Gabby sec1 audio3.m4a" type="audio/mp4">
+                Your browser does not support the audio element.
+              </audio>
+            </div>
+          </div>
+          <div class="curator-notes">
+            <h4>Curator's Notes</h4>
+            <p>Fandom emerges not through a sudden realization, but through a shift in how music is used. For both listeners, Olivia Dean's songs move beyond situational enjoyment and begin to shape how they understand love, growth, and emotional experience. What marks the transition into fandom here is not intensity, but the moment when music starts reframing how someone thinks or feels. Fandom begins when listening becomes personally consequential.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Theme 2 -->
+      <div class="theme-card" onclick="toggleTheme(this)">
+        <div class="theme-header">
+          <img src="data/olivia2.jpg" alt="The Artist as Mirror vs Guide" class="theme-image">
+          <h3>The Artist as Mirror vs Guide</h3>
+          <p class="theme-subheading">Different ways fans imagine closeness and connection to the same artist</p>
+          <p class="voice-count">4 voices</p>
+        </div>
+        <div class="theme-content">
+          <div class="audio-clips-grid">
+            <div class="audio-clip-item">
+              <p class="audio-label">Identifying with the artist's confidence and presence</p>
+              <audio controls>
+                <source src="audios/Gabby sec2 audio1.m4a" type="audio/mp4">
+                Your browser does not support the audio element.
+              </audio>
+            </div>
+            <div class="audio-clip-item">
+              <p class="audio-label">Seeing the artist as someone to grow toward</p>
+              <audio controls>
+                <source src="audios/Gabby sec2 audio2.m4a" type="audio/mp4">
+                Your browser does not support the audio element.
+              </audio>
+            </div>
+            <div class="audio-clip-item">
+              <p class="audio-label">Learning how to see experiences different</p>
+              <audio controls>
+                <source src="audios/cam sec2 audio1.m4a" type="audio/mp4">
+                Your browser does not support the audio element.
+              </audio>
+            </div>
+            <div class="audio-clip-item">
+              <p class="audio-label">Music offering perspective rather than reflection</p>
+              <audio controls>
+                <source src="audios/cam sec2 audio2.m4a" type="audio/mp4">
+                Your browser does not support the audio element.
+              </audio>
+            </div>
+          </div>
+          <div class="curator-notes">
+            <h4>Curator's Notes</h4>
+            <p>Parasocial connection does not take a single form. For one listener, Olivia Dean represents a future self: someone to admire, emulate, and move toward. For another, she functions as a guide, offering a broader perspective on love and experience. These voices show how intimacy can emerge either through identification or interpretation and complicate the idea that fans all relate to artists in the same way.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Theme 3 -->
+      <div class="theme-card" onclick="toggleTheme(this)">
+        <div class="theme-header">
+          <img src="data/olivia3.jpg" alt="Finding Authenticity" class="theme-image">
+          <h3>Finding Authenticity</h3>
+          <p class="theme-subheading">How fans recognize what feels real, genuine, or trustworthy</p>
+          <p class="voice-count">2 voices</p>
+        </div>
+        <div class="theme-content">
+          <div class="audio-clips-grid">
+            <div class="audio-clip-item">
+              <p class="audio-label">Authenticity felt through simplicity</p>
+              <audio controls>
+                <source src="audios/Gabby sec3 audio1.m4a" type="audio/mp4">
+                Your browser does not support the audio element.
+              </audio>
+            </div>
+            <div class="audio-clip-item">
+              <p class="audio-label">Emotion as proof of authenticity</p>
+              <audio controls>
+                <source src="audios/cam sec3 audio1.m4a" type="audio/mp4">
+                Your browser does not support the audio element.
+              </audio>
+            </div>
+          </div>
+          <div class="curator-notes">
+            <h4>Curator's Notes</h4>
+            <p>Authenticity appears here as something felt rather than defined. One listener experiences authenticity through restraint: performances that feel natural, untheatrical, and untouched by overexposure. Another locates authenticity in expression: through confessional songwriting, emotional delivery, and presence onstage. These differing interpretations suggest that authenticity is not a fixed quality of the artist, but a relational judgment shaped by what each fan values and notices.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Theme 4 -->
+      <div class="theme-card" onclick="toggleTheme(this)">
+        <div class="theme-header">
+          <img src="data/olivia4.jpg" alt="Social Media & Recognition" class="theme-image">
+          <h3>Social Media & Recognition</h3>
+          <p class="theme-subheading">When visibility, distance, and identity shape how connection is felt</p>
+          <p class="voice-count">3 voices</p>
+        </div>
+        <div class="theme-content">
+          <div class="audio-clips-grid">
+            <div class="audio-clip-item">
+              <p class="audio-label">Seeing yourself reflected in the artist</p>
+              <audio controls>
+                <source src="audios/cam sec4 audio1.m4a" type="audio/mp4">
+                Your browser does not support the audio element.
+              </audio>
+            </div>
+            <div class="audio-clip-item">
+              <p class="audio-label">Relatability through glimpses of personality</p>
+              <audio controls>
+                <source src="audios/cam sec4 audio2.m4a" type="audio/mp4">
+                Your browser does not support the audio element.
+              </audio>
+            </div>
+            <div class="audio-clip-item">
+              <p class="audio-label">Less visibility, more trust</p>
+              <audio controls>
+                <source src="audios/Gabby sec4 audio1.m4a" type="audio/mp4">
+                Your browser does not support the audio element.
+              </audio>
+            </div>
+          </div>
+          <div class="curator-notes">
+            <h4>Curator's Notes</h4>
+            <p>Social media plays an uneven but meaningful role in shaping connection. For one listener, discovering shared cultural roots and seeing a Black woman succeed in this genre deepens identification and pride. For another, limited online presence enhances authenticity by signaling distance from curated performance. This suggests that social media does not uniformly produce intimacy; instead, it mediates recognition differently depending on what a fan is seeking: visibility, relatability, or restraint.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Theme 5 -->
+      <div class="theme-card" onclick="toggleTheme(this)">
+        <div class="theme-header">
+          <img src="data/olivia5.jpg" alt="Who's a Real Fan?" class="theme-image">
+          <h3>Who's a "Real" Fan?</h3>
+          <p class="theme-subheading">Negotiating belonging, legitimacy, and who gets to claim fandom</p>
+          <p class="voice-count">3 voices</p>
+        </div>
+        <div class="theme-content">
+          <div class="audio-clips-grid">
+            <div class="audio-clip-item">
+              <p class="audio-label">Fandom defined by connection, not credentials</p>
+              <audio controls>
+                <source src="audios/Gabby sec5 audio1.m4a" type="audio/mp4">
+                Your browser does not support the audio element.
+              </audio>
+            </div>
+            <div class="audio-clip-item">
+              <p class="audio-label">Immersion as a form of belonging</p>
+              <audio controls>
+                <source src="audios/cam sec5 audio1.m4a" type="audio/mp4">
+                Your browser does not support the audio element.
+              </audio>
+            </div>
+            <div class="audio-clip-item">
+              <p class="audio-label">Allowing fandom to begin anywhere</p>
+              <audio controls>
+                <source src="audios/cam sec5 audio2.m4a" type="audio/mp4">
+                Your browser does not support the audio element.
+              </audio>
+            </div>
+          </div>
+          <div class="curator-notes">
+            <h4>Curator's Notes</h4>
+            <p>These varying perspectives reveal that fandom is policed less by rules than by values, and that what counts as a "real" fan depends on how belonging is imagined.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Theme 6 -->
+      <div class="theme-card" onclick="toggleTheme(this)">
+        <div class="theme-header">
+          <img src="data/olivia6.png" alt="Music as Emotional Language" class="theme-image">
+          <h3>Music as Emotional Language</h3>
+          <p class="theme-subheading">How songs become tools for naming, expressing, and living with emotion</p>
+          <p class="voice-count">4 voices</p>
+        </div>
+        <div class="theme-content">
+          <div class="audio-clips-grid">
+            <div class="audio-clip-item">
+              <p class="audio-label">Using music to access unspoken feelings</p>
+              <audio controls>
+                <source src="audios/Gabby sec6 audio1.m4a" type="audio/mp4">
+                Your browser does not support the audio element.
+              </audio>
+            </div>
+            <div class="audio-clip-item">
+              <p class="audio-label">Recognizing personal experiences in lyrics</p>
+              <audio controls>
+                <source src="audios/Gabby sec6 audio2.m4a" type="audio/mp4">
+                Your browser does not support the audio element.
+              </audio>
+            </div>
+            <div class="audio-clip-item">
+              <p class="audio-label">Music shaping how relationships are navigated</p>
+              <audio controls>
+                <source src="audios/Gabby sec6 audio3.m4a" type="audio/mp4">
+                Your browser does not support the audio element.
+              </audio>
+            </div>
+            <div class="audio-clip-item">
+              <p class="audio-label">Music as a language for vulnerability</p>
+              <audio controls>
+                <source src="audios/cam sec6 audio1.m4a" type="audio/mp4">
+                Your browser does not support the audio element.
+              </audio>
+            </div>
+          </div>
+          <div class="curator-notes">
+            <h4>Curator's Notes</h4>
+            <p>Music functions as a form of emotional translation. Both listeners describe using Olivia Dean's songs to access, name, and express feelings they struggle to articulate on their own, and over time, this practice has shaped how they understand themselves, their relationships, and their vulnerability. Here, fandom becomes internalized: music is no longer something they listen to, but something they use to think and feel with.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Theme 7 -->
+      <div class="theme-card" onclick="toggleTheme(this)">
+        <div class="theme-header">
+          <img src="data/olivia7.png" alt="What Outsiders Don't Understand" class="theme-image">
+          <h3>What Outsiders Don't Understand</h3>
+          <p class="theme-subheading">Where fandom becomes difficult to explain to those who aren't listening</p>
+          <p class="voice-count">2 voices</p>
+        </div>
+        <div class="theme-content">
+          <div class="audio-clips-grid">
+            <div class="audio-clip-item">
+              <p class="audio-label">An emotional response that feels impossible to explain</p>
+              <audio controls>
+                <source src="audios/Gabby sec7 audio1.m4a" type="audio/mp4">
+                Your browser does not support the audio element.
+              </audio>
+            </div>
+            <div class="audio-clip-item">
+              <p class="audio-label">Defending the depth of the music</p>
+              <audio controls>
+                <source src="audios/cam sec7 audio1.m4a" type="audio/mp4">
+                Your browser does not support the audio element.
+              </audio>
+            </div>
+          </div>
+          <div class="curator-notes">
+            <h4>Curator's Notes</h4>
+            <p>This where the true boundary of fandom lies: where emotional experience becomes difficult to explain to those who haven't listened in the same way.</p>
+          </div>
+        </div>
+      </div>
+     </div>
+
+     <div class="fans-conclusion">
+      <h3>Closing Thoughts</h3>
+      <p>Listening across these fan voices, it becomes clear that fandom does not begin or end at the same place for everyone. Some fans find closeness through aspiration, others through reflection or shared identity. Some value distance as authenticity, while others feel intimacy deepen through visibility. What unites these experiences is not intensity, but attention: how music is returned to again and again, used to name emotions, imagine futures, and feel less alone. In these fragments, fandom appears less as a label and more as a relationship with the artist, shaped over time, mediated by sound, and sustained through listening.</p>
+     </div>
+    </div>
+   </div>
+
+   <!-- Conclusion Page -->
+   <div class="page-container hidden" id="conclusionPage">
+    <div class="conclusion-page">
+     <div class="conclusion-hero">
+      <h1 id="conclusionHeading">Reflections</h1>
+      <p class="subtitle">Understanding parasocial attachment, authenticity, and the practice of fandom</p>
+     </div>
+
+     <div class="conclusion-image-wrapper">
+      <img src="data/olivia final.jpeg" alt="Olivia Dean" class="conclusion-image">
+     </div>
+
+     <div class="reflection-section">
+      <h2>The Process of Becoming</h2>
+      <p>This project began with a set of questions that felt deceptively simple: when does a casual listener become a fan? How does an artist's work come to feel personal enough to shape identity? And why does that intimacy feel real, even when the relationship is one-sided? By following fandom as a process, first through my own listening, then through the voices of other fans, I came to see that these questions cannot be answered by pointing to a single moment, platform, or behavior. Instead, fandom emerges through accumulation: of attention, interpretation, and emotional investment over time.</p>
+     </div>
+
+     <div class="reflection-section">
+      <h2>Intimacy as Practice</h2>
+      <p>What this project ultimately reveals is that parasocial attachment is less about illusion and more about practice. Intimacy is not created simply because an artist shares personal details, nor because fans believe they "know" them in a literal sense. Rather, intimacy forms through repeated acts of listening and return—through songs that are revisited in different emotional contexts, performances that give bodies and gestures to sound, and interviews that provide just enough detail to make an artist feel relatable without ever being fully known. The relationship feels real not because it is reciprocal, but because it is useful: it helps listeners make sense of their feelings, aspirations, and transitions.</p>
+     </div>
+
+     <div class="reflection-section">
+      <h2>Authenticity as Negotiation</h2>
+      <p>Across fan voices, authenticity also emerges as something negotiated rather than inherent. Some fans experience authenticity through restraint and distance, others through vulnerability and expression. What matters is not how much of the artist is revealed, but whether what is revealed aligns with how the music feels. Authenticity is co-produced by listeners who decide what feels trustworthy, grounded, or sincere. This helps explain why fandom can feel so personal and yet vary so widely: fans are not consuming the same relationship, even when they are consuming the same artist.</p>
+     </div>
+
+     <div class="reflection-section">
+      <h2>Fandom as Identity Work</h2>
+      <p>Perhaps most importantly, this project reframes fandom not as obsession or escapism, but as a site of identity work. Fans use music to name emotions they cannot articulate, to imagine future versions of themselves, and to locate belonging, sometimes alone, sometimes within a community. In this way, fandom functions less like devotion to a person and more like participation in a shared emotional language. Being a fan becomes a way of saying something about who you are, what you value, and how you move through the world.</p>
+     </div>
+
+     <div class="final-thought">
+      <p>Parasocial relationships matter because they shape how people understand intimacy itself. In a world where connection is increasingly mediated, fandom offers a model of closeness that does not rely on reciprocity, but still feels meaningful, grounding, and real. To take fandom seriously is to take seriously the ways people learn to feel, care, and belong—often first through listening.</p>
+     </div>
+    </div>
+   </div>
+  </div>
+
+  <script>
+    const defaultConfig = {
+      background_color: '#ffffff',
+      surface_color: '#f5f5f5',
+      text_color: '#1a1a1a',
+      secondary_color: '#666666',
+      accent_color: '#1a1a1a',
+      font_family: 'Helvetica Neue, Arial, sans-serif',
+      font_size: 16,
+      project_title: 'Birth of a Fan',
+      intro_nav_text: 'Introduction',
+      artist_nav_text: 'Voice of the Artist',
+      fans_nav_text: 'Voice of the Fans',
+      conclusion_nav_text: 'Conclusion',
+      intro_heading: 'Birth of a Fan',
+      artist_heading: 'Voice of the Artist',
+      fans_heading: 'Voice of the Fans',
+      conclusion_heading: 'Reflections'
+    };
+
+    function onConfigChange(config) {
+      const backgroundColor = config.background_color || defaultConfig.background_color;
+      const surfaceColor = config.surface_color || defaultConfig.surface_color;
+      const textColor = config.text_color || defaultConfig.text_color;
+      const secondaryColor = config.secondary_color || defaultConfig.secondary_color;
+      const accentColor = config.accent_color || defaultConfig.accent_color;
+      const fontFamily = config.font_family || defaultConfig.font_family;
+      const fontSize = config.font_size || defaultConfig.font_size;
+
+      document.body.style.backgroundColor = backgroundColor;
+      document.body.style.color = textColor;
+      document.body.style.fontFamily = fontFamily;
+      document.body.style.fontSize = `${fontSize}px`;
+
+      const navLinksActive = document.querySelectorAll('.nav-links a.active');
+      navLinksActive.forEach(link => {
+        link.style.color = accentColor;
+      });
+
+      const themeCards = document.querySelectorAll('.theme-card');
+      themeCards.forEach(card => {
+        card.style.backgroundColor = surfaceColor;
+      });
+
+      const conclusions = document.querySelectorAll('.fans-conclusion, .final-thought');
+      conclusions.forEach(conclusion => {
+        conclusion.style.backgroundColor = surfaceColor;
+      });
+
+      const curatorNotes = document.querySelectorAll('.curator-notes');
+      curatorNotes.forEach(note => {
+        note.style.backgroundColor = backgroundColor;
+      });
+
+      const audioClipItems = document.querySelectorAll('.audio-clip-item');
+      audioClipItems.forEach(item => {
+        item.style.backgroundColor = backgroundColor;
+      });
+
+      document.getElementById('navTitle').textContent = config.project_title || defaultConfig.project_title;
+      document.getElementById('navIntro').textContent = config.intro_nav_text || defaultConfig.intro_nav_text;
+      document.getElementById('navArtist').textContent = config.artist_nav_text || defaultConfig.artist_nav_text;
+      document.getElementById('navFans').textContent = config.fans_nav_text || defaultConfig.fans_nav_text;
+      document.getElementById('navConclusion').textContent = config.conclusion_nav_text || defaultConfig.conclusion_nav_text;
+      document.getElementById('introHeading').textContent = config.intro_heading || defaultConfig.intro_heading;
+      document.getElementById('artistHeading').textContent = config.artist_heading || defaultConfig.artist_heading;
+      document.getElementById('fansHeading').textContent = config.fans_heading || defaultConfig.fans_heading;
+      document.getElementById('conclusionHeading').textContent = config.conclusion_heading || defaultConfig.conclusion_heading;
+
+      const headings = document.querySelectorAll('h1');
+      headings.forEach(h => {
+        h.style.fontSize = `${fontSize * 2.2}px`;
+        h.style.color = textColor;
+      });
+
+      const h2s = document.querySelectorAll('h2');
+      h2s.forEach(h => {
+        h.style.fontSize = `${fontSize * 1.6}px`;
+        h.style.color = textColor;
+      });
+
+      const h3s = document.querySelectorAll('h3');
+      h3s.forEach(h => {
+        h.style.fontSize = `${fontSize * 1.3}px`;
+        h.style.color = textColor;
+      });
+
+      const paragraphs = document.querySelectorAll('p');
+      paragraphs.forEach(p => {
+        p.style.fontSize = `${fontSize * 1.05}px`;
+        p.style.color = textColor;
+      });
+
+      const subtitles = document.querySelectorAll('.subtitle');
+      subtitles.forEach(s => {
+        s.style.fontSize = `${fontSize * 1.15}px`;
+        s.style.color = secondaryColor;
+      });
+
+      const voiceCounts = document.querySelectorAll('.voice-count');
+      voiceCounts.forEach(v => {
+        v.style.color = secondaryColor;
+      });
+
+      const audioLabels = document.querySelectorAll('.audio-label');
+      audioLabels.forEach(l => {
+        l.style.color = secondaryColor;
+      });
+    }
+
+    if (window.elementSdk) {
+      window.elementSdk.init({
+        defaultConfig,
+        onConfigChange
+      });
+
+      onConfigChange(window.elementSdk.config);
+    }
+
+    const navLinks = document.querySelectorAll('.nav-link');
+    const pages = document.querySelectorAll('.page-container');
+
+    navLinks.forEach(link => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        const targetPage = link.getAttribute('data-page');
+        
+        navLinks.forEach(l => l.classList.remove('active'));
+        link.classList.add('active');
+        
+        pages.forEach(page => {
+          page.classList.remove('active');
+          page.classList.add('hidden');
+        });
+        
+        const targetElement = document.getElementById(`${targetPage}Page`);
+        targetElement.classList.remove('hidden');
+        setTimeout(() => {
+          targetElement.classList.add('active');
+        }, 10);
+        
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+    });
+
+    window.addEventListener('scroll', () => {
+      const nav = document.getElementById('nav');
+      if (window.scrollY > 50) {
+        nav.classList.add('scrolled');
+      } else {
+        nav.classList.remove('scrolled');
+      }
+    });
+
+    function toggleIntro() {
+      const introFull = document.getElementById('introFull');
+      const btn = document.getElementById('readMoreBtn');
+      const btnText = document.getElementById('btnText');
+      
+      if (introFull.classList.contains('expanded')) {
+        introFull.classList.remove('expanded');
+        btn.classList.remove('expanded');
+        btnText.textContent = 'Show Introduction';
+      } else {
+        introFull.classList.add('expanded');
+        btn.classList.add('expanded');
+        btnText.textContent = 'Minimize';
+      }
+    }
+
+    function toggleTheme(element) {
+      const allThemes = document.querySelectorAll('.theme-card');
+      
+      // Close all other themes
+      allThemes.forEach(theme => {
+        if (theme !== element) {
+          theme.classList.remove('expanded');
+          // Pause all audio in closed themes
+          theme.querySelectorAll('audio').forEach(audio => audio.pause());
+        }
+      });
+      
+      // Toggle current theme
+      element.classList.toggle('expanded');
+      
+      // If closing, pause audio
+      if (!element.classList.contains('expanded')) {
+        element.querySelectorAll('audio').forEach(audio => audio.pause());
+      }
+    }
+
+    function toggleTrack(element) {
+      const allTracks = document.querySelectorAll('.tracklist li');
+      allTracks.forEach(track => {
+        if (track !== element) {
+          track.classList.remove('active');
+        }
+      });
+      element.classList.toggle('active');
+    }
+
+    function toggleMedia(element) {
+      element.classList.toggle('expanded');
+    }
+
+    function toggleReflection(button) {
+      const reflection = button.nextElementSibling;
+      reflection.classList.toggle('show');
+      button.classList.toggle('active');
+      
+      if (button.classList.contains('active')) {
+        button.textContent = 'Hide Thoughts';
+      } else {
+        button.textContent = 'Final Thoughts';
+      }
+    }
+
+    // Pause all other audio when one starts playing
+    document.addEventListener('play', function(e) {
+      const audios = document.querySelectorAll('audio');
+      audios.forEach(audio => {
+        if (audio !== e.target) {
+          audio.pause();
+        }
+      });
+    }, true);
+  </script>
+ </body>
+</html>
